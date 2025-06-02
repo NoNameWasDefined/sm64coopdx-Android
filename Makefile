@@ -923,8 +923,12 @@ endif
 CPPFLAGS := -P -Wno-trigraphs $(DEF_INC_CFLAGS)
 
 ifeq ($(TARGET_ANDROID),1)
+  ANDROID_SAF ?= 0
   ifneq ($(shell which termux-setup-storage),) # Termux has clang
     CPPFLAGS := -E -P -x c -Wno-trigraphs $(DEF_INC_CFLAGS)
+  endif
+  ifeq ($(ANDROID_SAF),1)
+        CPPFLAGS += -DANDROID_SAF
   endif
 endif
 
