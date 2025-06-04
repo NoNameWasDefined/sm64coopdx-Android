@@ -301,6 +301,12 @@ static void sys_fatal_impl(const char *msg) {
 
 #ifdef __ANDROID__
 const char *get_gamedir(void) {
+#ifdef ANDROID_SAF
+    static char gamedir[SYS_MAX_PATH] = { 0 };
+    const char *basedir = SDL_AndroidGetExternalStoragePath();
+    snprintf(gamedir, sizeof(gamedir), "%s", basedir);
+    return gamedir;
+#else
     SDL_bool privileged_write = SDL_FALSE, privileged_manage = SDL_FALSE;
     static char gamedir_unprivileged[SYS_MAX_PATH] = { 0 }, gamedir_privileged[SYS_MAX_PATH] = { 0 };
     const char *basedir_unprivileged = SDL_AndroidGetExternalStoragePath();
@@ -316,6 +322,7 @@ const char *get_gamedir(void) {
     //Android 11 and up
     privileged_manage = SDL_AndroidRequestPermission("android.permission.MANAGE_EXTERNAL_STORAGE");
     return (privileged_write || privileged_manage) ? gamedir_privileged : gamedir_unprivileged;
+#endif
 }
 #endif
 
